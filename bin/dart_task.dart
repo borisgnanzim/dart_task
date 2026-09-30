@@ -36,7 +36,9 @@ Future<void> _handle(String input, TaskManager manager) async {
   switch (command) {
     case 'help':
       print('add <titre> [low|medium|high] [YYYY-MM-DD] [urgent]');
-      print('list [priority|date] | done <id> | delete <id> | quit');
+      print(
+        'list [priority|date] | done/complete <id> | delete/remove <id> | quit',
+      );
     case 'add':
       if (parts.length < 2) throw const InvalidTaskException('Titre requis.');
       final titleParts = parts.sublist(1);
@@ -78,13 +80,13 @@ Future<void> _handle(String input, TaskManager manager) async {
           '[$status] ${task.id} | ${task.priority.name} | $date | ${task.title}',
         );
       }
-    case 'done':
+    case 'done' || 'complete':
       if (parts.length < 2) {
         throw const InvalidTaskException('Identifiant requis.');
       }
       await manager.completeTask(parts[1]);
       print('Tache terminee.');
-    case 'delete':
+    case 'delete' || 'remove':
       if (parts.length < 2) {
         throw const InvalidTaskException('Identifiant requis.');
       }

@@ -60,8 +60,8 @@ L'application fonctionne en mode interactif. Les commandes disponibles sont :
 | `list` | Affiche toutes les tâches dans leur ordre de création. |
 | `list priority` | Trie les tâches de la priorité la plus haute à la plus basse. |
 | `list date` | Trie les tâches par date limite, les tâches sans date en dernier. |
-| `done <id>` | Marque la tâche identifiée comme terminée. |
-| `delete <id>` | Supprime la tâche identifiée. |
+| `done <id>` ou `complete <id>` | Marque la tâche identifiée comme terminée. |
+| `delete <id>` ou `remove <id>` | Supprime la tâche identifiée. |
 | `help` | Affiche un rappel des commandes principales. |
 | `quit` ou `exit` | Ferme l'application. |
 

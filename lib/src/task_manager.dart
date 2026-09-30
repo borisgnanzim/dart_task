@@ -55,10 +55,14 @@ class TaskManager {
     await repository.save(task);
   }
 
+  Future<void> markAsCompleted(String id) => completeTask(id);
+
   Future<void> removeTask(String id) async {
     await _find(id);
     await repository.delete(id);
   }
+
+  Future<void> deleteTask(String id) => removeTask(id);
 
   Future<Task> _find(String id) async {
     final tasks = await repository.getAll();

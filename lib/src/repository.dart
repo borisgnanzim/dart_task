@@ -4,7 +4,7 @@ import 'dart:io';
 import 'exceptions.dart';
 import 'task.dart';
 
-abstract class Repository<T> {
+abstract interface class Repository<T> {
   Future<List<T>> getAll();
   Future<void> save(T item);
   Future<void> delete(String id);
