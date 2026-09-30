@@ -14,6 +14,7 @@ tâches, avec une sauvegarde automatique dans un fichier JSON local.
 - Suppression d'une tâche
 - Persistance locale dans `tasks.json`
 - Validation des données et erreurs métier explicites
+- Événements asynchrones exposés par un `Stream<TaskEvent>`
 
 ## Prérequis
 
@@ -104,6 +105,9 @@ Le code est organisé autour de quatre éléments :
 	fournit son implémentation pour un fichier JSON.
 - `TaskManager` contient les opérations métier et ne dépend que de
 	`Repository<Task>`, ce qui facilite les tests.
+- `TaskPresentation` est une extension qui fournit un résumé d'affichage et
+  détecte les tâches en retard.
+- `TaskManager.events` expose les changements via un `StreamController`.
 
 Les erreurs sont signalées avec `InvalidTaskException`,
 `TaskNotFoundException` et `TaskStorageException`.
@@ -122,6 +126,7 @@ La suite couvre notamment :
 - la terminaison et la suppression ;
 - les erreurs de validation et les identifiants inconnus ;
 - la restauration d'une `UrgentTask` depuis le JSON.
+- les événements asynchrones et les extensions Dart.
 
 Pour vérifier également le code avec l'analyseur Dart :
 

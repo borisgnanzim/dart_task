@@ -117,4 +117,30 @@ void main() {
       throwsA(isA<InvalidTaskException>()),
     );
   });
+
+  test('expose les changements via un StreamController', () async {
+    final events = <TaskEvent>[];
+    final subscription = manager.events.listen(events.add);
+    final task = await manager.addTask('Suivi', Priority.medium);
+    await manager.completeTask(task.id);
+    await manager.removeTask(task.id);
+    await Future<void>.delayed(Duration.zero);
+    expect(events.map((event) => event.type), [
+      TaskEventType.added,
+      TaskEventType.completed,
+      TaskEventType.deleted,
+    ]);
+    await subscription.cancel();
+  });
+
+  test('l extension signale une tache en retard', () {
+    final task = StandardTask(
+      id: 'late-1',
+      title: 'En retard',
+      priority: Priority.high,
+      dueDate: DateTime.now().subtract(const Duration(days: 1)),
+    );
+    expect(task.isOverdue, isTrue);
+    expect(task.summary, contains('En retard'));
+  });
 }

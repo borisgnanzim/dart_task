@@ -1,13 +1,28 @@
+import 'dart:async';
+
 import 'package:dart_task/src/exceptions.dart';
 import 'package:dart_task/src/repository.dart';
 import 'package:dart_task/src/task.dart';
 
 enum TaskSort { priority, dueDate }
 
+enum TaskEventType { added, completed, deleted }
+
+class TaskEvent {
+  final TaskEventType type;
+  final String taskId;
+
+  const TaskEvent(this.type, this.taskId);
+}
+
 class TaskManager {
   final Repository<Task> repository;
+  final StreamController<TaskEvent> _eventController =
+      StreamController<TaskEvent>.broadcast();
 
   TaskManager(this.repository);
+
+  Stream<TaskEvent> get events => _eventController.stream;
 
   Future<Task> addTask(
     String title,
@@ -31,6 +46,7 @@ class TaskManager {
               dueDate: dueDate,
             );
     await repository.save(task);
+    _eventController.add(TaskEvent(TaskEventType.added, task.id));
     return task;
   }
 
@@ -53,6 +69,7 @@ class TaskManager {
     final task = await _find(id);
     task.isCompleted = true;
     await repository.save(task);
+    _eventController.add(TaskEvent(TaskEventType.completed, task.id));
   }
 
   Future<void> markAsCompleted(String id) => completeTask(id);
@@ -60,6 +77,7 @@ class TaskManager {
   Future<void> removeTask(String id) async {
     await _find(id);
     await repository.delete(id);
+    _eventController.add(TaskEvent(TaskEventType.deleted, id));
   }
 
   Future<void> deleteTask(String id) => removeTask(id);
@@ -74,4 +92,6 @@ class TaskManager {
   }
 
   String _newId() => DateTime.now().microsecondsSinceEpoch.toString();
+
+  Future<void> dispose() => _eventController.close();
 }

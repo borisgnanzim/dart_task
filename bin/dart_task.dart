@@ -12,6 +12,7 @@ Future<void> main(List<String> arguments) async {
     } on FormatException {
       print('Format invalide. Consultez "help".');
     }
+    await manager.dispose();
     return;
   }
 
@@ -28,6 +29,7 @@ Future<void> main(List<String> arguments) async {
       print('Format invalide. Consultez "help".');
     }
   }
+  await manager.dispose();
 }
 
 Future<void> _handle(String input, TaskManager manager) async {
@@ -75,10 +77,7 @@ Future<void> _handle(String input, TaskManager manager) async {
               : null;
       for (final task in await manager.listTasks(sort: sort)) {
         final status = task.isCompleted ? 'x' : ' ';
-        final date = task.dueDate?.toIso8601String().split('T').first ?? '-';
-        print(
-          '[$status] ${task.id} | ${task.priority.name} | $date | ${task.title}',
-        );
+        print('[$status] ${task.id} | ${task.summary}');
       }
     case 'done' || 'complete':
       if (parts.length < 2) {

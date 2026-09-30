@@ -2,6 +2,15 @@ import 'exceptions.dart';
 
 enum Priority { low, medium, high }
 
+typedef TaskFields =
+    ({
+      String id,
+      String title,
+      Priority priority,
+      DateTime? dueDate,
+      bool isCompleted,
+    });
+
 Priority priorityFromString(String value) {
   return Priority.values.firstWhere(
     (priority) => priority.name == value.toLowerCase(),
@@ -44,14 +53,9 @@ abstract class Task {
 
   static Task fromJson(Map<String, dynamic> json) {
     final type = json['type'] as String? ?? 'standard';
-    final id = json['id'] as String;
-    final title = json['title'] as String;
-    final priority = priorityFromString(json['priority'] as String);
-    final dueDate =
-        json['dueDate'] == null
-            ? null
-            : DateTime.parse(json['dueDate'] as String);
-    final isCompleted = json['isCompleted'] as bool? ?? false;
+    final (:id, :title, :priority, :dueDate, :isCompleted) = _readTaskFields(
+      json,
+    );
     if (type == 'urgent') {
       return UrgentTask(
         id: id,
@@ -69,6 +73,18 @@ abstract class Task {
       isCompleted: isCompleted,
     );
   }
+}
+
+TaskFields _readTaskFields(Map<String, dynamic> json) {
+  final dueDateValue = json['dueDate'];
+  return (
+    id: json['id'] as String,
+    title: json['title'] as String,
+    priority: priorityFromString(json['priority'] as String),
+    dueDate:
+        dueDateValue == null ? null : DateTime.parse(dueDateValue as String),
+    isCompleted: json['isCompleted'] as bool? ?? false,
+  );
 }
 
 class StandardTask extends Task {
