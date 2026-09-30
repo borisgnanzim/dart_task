@@ -39,6 +39,29 @@ void main() {
     expect(tasks.map((task) => task.title), ['Haut', 'Bas']);
   });
 
+  test(
+    'trie les taches par date et place les dates absentes a la fin',
+    () async {
+      await manager.addTask('Sans date', Priority.low);
+      await manager.addTask(
+        'Plus tard',
+        Priority.low,
+        dueDate: DateTime(2026, 12, 1),
+      );
+      await manager.addTask(
+        'Bientot',
+        Priority.low,
+        dueDate: DateTime(2026, 10, 1),
+      );
+      final tasks = await manager.listTasks(sort: TaskSort.dueDate);
+      expect(tasks.map((task) => task.title), [
+        'Bientot',
+        'Plus tard',
+        'Sans date',
+      ]);
+    },
+  );
+
   test('termine une tache', () async {
     final task = await manager.addTask('Finir', Priority.medium);
     await manager.completeTask(task.id);
@@ -68,5 +91,30 @@ void main() {
     final restored = (await repository.getAll()).single;
     expect(restored, isA<UrgentTask>());
     expect(restored.priority, Priority.high);
+  });
+
+  test('une tache urgente utilise la priorite high', () async {
+    final task = await manager.addTask('Incident', Priority.low, urgent: true);
+    expect(task, isA<UrgentTask>());
+    expect(task.priority, Priority.high);
+  });
+
+  test('transforme un JSON corrompu en exception personnalisee', () async {
+    final file = File('${tempDirectory.path}/tasks.json');
+    await file.writeAsString('{"not": "a list"}');
+    expect(repository.getAll(), throwsA(isA<TaskStorageException>()));
+  });
+
+  test('normalise le titre et refuse un identifiant vide', () {
+    final task = StandardTask(
+      id: 'task-1',
+      title: '  Titre  ',
+      priority: Priority.low,
+    );
+    expect(task.title, 'Titre');
+    expect(
+      () => StandardTask(id: '', title: 'Titre', priority: Priority.low),
+      throwsA(isA<InvalidTaskException>()),
+    );
   });
 }

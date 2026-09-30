@@ -21,14 +21,26 @@ class JsonTaskRepository implements Repository<Task> {
     try {
       final content = await file.readAsString();
       if (content.trim().isEmpty) return [];
-      final data = jsonDecode(content) as List<dynamic>;
+      final decoded = jsonDecode(content);
+      if (decoded is! List<dynamic>) {
+        throw const TaskStorageException(
+          'Le fichier JSON doit contenir une liste.',
+        );
+      }
+      final data = decoded;
       return data
           .map((item) => Task.fromJson(item as Map<String, dynamic>))
           .toList();
+    } on TaskStorageException {
+      rethrow;
+    } on TaskException catch (error) {
+      throw TaskStorageException('Donnees invalides: ${error.message}');
     } on FormatException catch (error) {
       throw TaskStorageException('JSON invalide: ${error.message}');
     } on IOException catch (error) {
       throw TaskStorageException('Lecture impossible: $error');
+    } catch (error) {
+      throw TaskStorageException('Donnees invalides: $error');
     }
   }
 

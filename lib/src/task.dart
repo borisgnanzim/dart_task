@@ -18,11 +18,14 @@ abstract class Task {
 
   Task({
     required this.id,
-    required this.title,
+    required String title,
     required this.priority,
     this.dueDate,
     this.isCompleted = false,
-  }) {
+  }) : title = title.trim() {
+    if (id.trim().isEmpty) {
+      throw const InvalidTaskException('Identifiant invalide.');
+    }
     if (title.trim().isEmpty) {
       throw const InvalidTaskException('Le titre ne peut pas etre vide.');
     }

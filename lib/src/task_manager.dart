@@ -15,18 +15,19 @@ class TaskManager {
     DateTime? dueDate,
     bool urgent = false,
   }) async {
+    final taskPriority = urgent ? Priority.high : priority;
     final task =
         urgent
             ? UrgentTask(
               id: _newId(),
               title: title,
-              priority: priority,
+              priority: taskPriority,
               dueDate: dueDate,
             )
             : StandardTask(
               id: _newId(),
               title: title,
-              priority: priority,
+              priority: taskPriority,
               dueDate: dueDate,
             );
     await repository.save(task);
@@ -34,7 +35,7 @@ class TaskManager {
   }
 
   Future<List<Task>> listTasks({TaskSort? sort}) async {
-    final tasks = await repository.getAll();
+    final tasks = List<Task>.of(await repository.getAll());
     if (sort == TaskSort.priority) {
       tasks.sort((a, b) => b.priority.index.compareTo(a.priority.index));
     } else if (sort == TaskSort.dueDate) {

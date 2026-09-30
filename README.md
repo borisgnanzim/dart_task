@@ -31,7 +31,7 @@ dart --version
 Récupérer le projet puis installer les dépendances de développement :
 
 ```bash
-git clone <url-du-repository>
+git clone https://github.com/borisgnanzim/dart_task.git
 cd dart_task
 dart pub get
 ```
@@ -48,7 +48,7 @@ L'application fonctionne en mode interactif. Les commandes disponibles sont :
 
 | Commande | Description |
 | --- | --- |
-| `add <titre> [priorité] [YYYY-MM-DD]` | Ajoute une tâche. La priorité par défaut est `medium`. |
+| `add <titre> [priorité] [YYYY-MM-DD] [urgent]` | Ajoute une tâche. La priorité par défaut est `medium`. L'option `urgent` force la priorité `high`. |
 | `list` | Affiche toutes les tâches dans leur ordre de création. |
 | `list priority` | Trie les tâches de la priorité la plus haute à la plus basse. |
 | `list date` | Trie les tâches par date limite, les tâches sans date en dernier. |
@@ -78,7 +78,8 @@ Tache supprimee.
 ```
 
 Le titre peut contenir plusieurs mots. Lorsqu'une priorité ou une date est
-fournie, elles doivent être placées à la fin de la commande `add`.
+fournie, elles doivent être placées à la fin de la commande `add`. L'option
+`urgent` peut être placée en dernière position.
 
 Les données sont sauvegardées dans `tasks.json` à côté du projet. Ce fichier
 est créé automatiquement au premier ajout et peut être supprimé pour repartir

@@ -24,12 +24,17 @@ Future<void> _handle(String input, TaskManager manager) async {
   final command = parts.first.toLowerCase();
   switch (command) {
     case 'help':
-      print('add <titre> [low|medium|high] [YYYY-MM-DD]');
+      print('add <titre> [low|medium|high] [YYYY-MM-DD] [urgent]');
       print('list [priority|date] | done <id> | delete <id> | quit');
     case 'add':
       if (parts.length < 2) throw const InvalidTaskException('Titre requis.');
       final titleParts = parts.sublist(1);
       DateTime? dueDate;
+      var urgent = false;
+      if (titleParts.isNotEmpty && titleParts.last.toLowerCase() == 'urgent') {
+        urgent = true;
+        titleParts.removeLast();
+      }
       if (titleParts.isNotEmpty && _isDate(titleParts.last)) {
         dueDate = DateTime.parse(titleParts.removeLast());
       }
@@ -38,9 +43,17 @@ Future<void> _handle(String input, TaskManager manager) async {
         priority = priorityFromString(titleParts.removeLast());
       }
       final title = titleParts.join(' ').replaceAll('"', '').trim();
-      final task = await manager.addTask(title, priority, dueDate: dueDate);
+      final task = await manager.addTask(
+        title,
+        priority,
+        dueDate: dueDate,
+        urgent: urgent,
+      );
       print('Tache ajoutee: ${task.id}');
     case 'list':
+      if (parts.length > 1 && parts[1] != 'priority' && parts[1] != 'date') {
+        throw const InvalidTaskException('Tri invalide: priority ou date.');
+      }
       final sort =
           parts.length > 1 && parts[1] == 'priority'
               ? TaskSort.priority

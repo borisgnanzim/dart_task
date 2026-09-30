@@ -1,7 +1,7 @@
 name: dart_task
-description: A sample command-line application.
+description: Application CLI de gestion de taches en Dart avec persistance JSON.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/borisgnanzim/dart_task
 
 environment:
   sdk: ^3.7.2
