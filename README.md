@@ -44,6 +44,14 @@ Depuis la racine du projet :
 dart run
 ```
 
+Une commande peut également être passée directement au programme, ce qui est
+pratique pour les scripts :
+
+```bash
+dart run dart_task add "Preparer le rapport" high 2026-10-15
+dart run dart_task list priority
+```
+
 L'application fonctionne en mode interactif. Les commandes disponibles sont :
 
 | Commande | Description |

@@ -2,8 +2,19 @@ import 'dart:io';
 
 import 'package:dart_task/dart_task.dart';
 
-Future<void> main() async {
+Future<void> main(List<String> arguments) async {
   final manager = TaskManager(JsonTaskRepository('tasks.json'));
+  if (arguments.isNotEmpty) {
+    try {
+      await _handle(arguments.join(' '), manager);
+    } on TaskException catch (error) {
+      print(error);
+    } on FormatException {
+      print('Format invalide. Consultez "help".');
+    }
+    return;
+  }
+
   print('Gestionnaire de taches. Tapez "help" pour commencer.');
   while (true) {
     stdout.write('> ');
